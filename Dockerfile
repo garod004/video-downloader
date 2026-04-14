@@ -17,6 +17,6 @@ COPY app/ ./app/
 # Criar pastas de dados (serão sobrescritas pelo volume em produção)
 RUN mkdir -p /app/downloads /app/data
 
-EXPOSE 8080
+EXPOSE 8090
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080", "--workers", "1"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8090", "--workers", "1"]

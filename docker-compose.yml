@@ -6,7 +6,7 @@ services:
     container_name: yt-downloader
     restart: unless-stopped
     ports:
-      - "8080:8080"          # Acesse em: http://<ip-do-umbrel>:8080
+      - "8090:8090"          # Acesse em: http://<ip-do-umbrel>:8090
     volumes:
       - ./downloads:/app/downloads   # Vídeos baixados ficam aqui
       - ./data:/app/data             # Banco SQLite (histórico)

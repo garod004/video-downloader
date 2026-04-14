@@ -1,0 +1,27 @@
+version: "3.7"
+
+# Docker Compose para instalação via Umbrel Community App Store.
+# A imagem é publicada automaticamente em ghcr.io via GitHub Actions.
+
+services:
+  app_proxy:
+    environment:
+      APP_HOST: yt-downloader_web_1
+      APP_PORT: 8090
+      PROXY_AUTH_ADD: "false"
+
+  web:
+    image: ghcr.io/garod004/yt-downloader:latest
+    container_name: yt-downloader_web_1
+    restart: on-failure
+    stop_grace_period: 1m
+    ports:
+      - "${APP_PORT}:8090"
+    volumes:
+      - "${APP_DATA_DIR}/db:/app/data"
+      - "${APP_STORAGE_DIR}/downloads:/app/downloads"
+    environment:
+      DOWNLOAD_DIR: /app/downloads
+      DB_PATH: /app/data/downloads.db
+    mem_limit: 512m
+    cpus: "1.0"
