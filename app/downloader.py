@@ -142,15 +142,43 @@ def _run_download(download_id: str, url: str, format_key: str) -> None:
             info = ydl.extract_info(url, download=True)
 
         title: str = info.get("title", "") if info else ""
-        filename = progress_store[download_id].get("filename", "")
         is_playlist = 1 if info and info.get("_type") == "playlist" else 0
         playlist_total = info.get("n_entries", 0) if info else 0
+
+        # Pega o nome do arquivo final (após merge do ffmpeg)
+        # requested_downloads[0]['filepath'] contém o path real do arquivo final
+        filename = ""
+        if info:
+            requested = info.get("requested_downloads") or []
+            if requested:
+                filepath = requested[0].get("filepath", "")
+                filename = os.path.basename(filepath)
+            # Para playlists, pega o último item baixado
+            elif info.get("_type") == "playlist":
+                entries = info.get("entries") or []
+                for entry in reversed(entries):
+                    if entry:
+                        req = entry.get("requested_downloads") or []
+                        if req:
+                            filename = os.path.basename(req[0].get("filepath", ""))
+                            break
+
+        # Fallback: arquivo mais recente na pasta de downloads
+        if not filename and os.path.exists(DOWNLOAD_DIR):
+            files = sorted(
+                [f for f in os.scandir(DOWNLOAD_DIR) if f.is_file()],
+                key=lambda f: f.stat().st_mtime,
+                reverse=True,
+            )
+            if files:
+                filename = files[0].name
 
         progress_store[download_id].update(
             {
                 "status": "complete",
                 "percent": 100.0,
                 "title": title,
+                "filename": filename,
                 "speed": "",
                 "eta": "",
             }
