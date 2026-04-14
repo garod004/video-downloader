@@ -25,29 +25,17 @@ progress_store: dict[str, dict[str, Any]] = {}
 FORMAT_OPTIONS: dict[str, dict] = {
     "video-1080": {
         "label": "Vídeo 1080p (MP4)",
-        "format": (
-            "bestvideo[height<=1080][ext=mp4]+bestaudio[ext=m4a]"
-            "/bestvideo[height<=1080]+bestaudio"
-            "/best[height<=1080]"
-        ),
+        "format": "bestvideo[height<=1080]+bestaudio/best[height<=1080]/best",
         "merge_output_format": "mp4",
     },
     "video-720": {
         "label": "Vídeo 720p (MP4)",
-        "format": (
-            "bestvideo[height<=720][ext=mp4]+bestaudio[ext=m4a]"
-            "/bestvideo[height<=720]+bestaudio"
-            "/best[height<=720]"
-        ),
+        "format": "bestvideo[height<=720]+bestaudio/best[height<=720]/best",
         "merge_output_format": "mp4",
     },
     "video-480": {
         "label": "Vídeo 480p (MP4)",
-        "format": (
-            "bestvideo[height<=480][ext=mp4]+bestaudio[ext=m4a]"
-            "/bestvideo[height<=480]+bestaudio"
-            "/best[height<=480]"
-        ),
+        "format": "bestvideo[height<=480]+bestaudio/best[height<=480]/best",
         "merge_output_format": "mp4",
     },
     "audio-mp3": {
