@@ -1,9 +1,12 @@
-# YT Downloader
+# Video Downloader
 
-Interface web para baixar vídeos e músicas do YouTube, feita para rodar no servidor Umbrel.
+Interface web para baixar vídeos e músicas de qualquer plataforma, feita para rodar no servidor Umbrel.
+
+Suporta YouTube, Twitter/X, Instagram, TikTok e centenas de outros sites via [yt-dlp](https://github.com/yt-dlp/yt-dlp).
 
 ## Funcionalidades
 
+- Suporte a YouTube, Twitter/X, Instagram, TikTok e muito mais
 - Download de vídeos em 1080p, 720p e 480p (MP4)
 - Download de áudio em MP3 (192kbps)
 - Suporte a playlists completas
@@ -21,8 +24,8 @@ Interface web para baixar vídeos e músicas do YouTube, feita para rodar no ser
 ### 1. Clonar o repositório
 
 ```bash
-git clone https://github.com/SEU-USUARIO/yt-downloader.git
-cd yt-downloader
+git clone https://github.com/garod004/video-downloader.git
+cd video-downloader
 ```
 
 ### 2. Subir o container
@@ -34,10 +37,10 @@ docker compose up -d --build
 ### 3. Acessar no navegador
 
 ```
-http://<IP-DO-UMBREL>:8080
+http://<IP-DO-UMBREL>:8090
 ```
 
-Exemplo: `http://192.168.1.100:8080`
+Exemplo: `http://192.168.1.100:8090`
 
 ---
 
@@ -59,8 +62,6 @@ Exemplo: `http://192.168.1.100:8080`
 ```
 
 ## Atualizar o app
-
-Para atualizar para uma versão nova (ex: yt-dlp atualizado):
 
 ```bash
 git pull
