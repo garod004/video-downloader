@@ -1,0 +1,19 @@
+version: '3.7'
+
+services:
+  app_proxy:
+    environment:
+      APP_HOST: garod004-apps-file-converter_server_1
+      APP_PORT: 9191
+
+  server:
+    image: ghcr.io/garod004/file-converter:latest
+    restart: on-failure
+    volumes:
+      - ${APP_DATA_DIR}/data:/app/data
+      - ${APP_DATA_DIR}/output:/app/output
+    environment:
+      UPLOAD_DIR: /tmp/uploads
+      OUTPUT_DIR: /app/output
+      DB_PATH: /app/data/conversions.db
+      MAX_UPLOAD_MB: "500"

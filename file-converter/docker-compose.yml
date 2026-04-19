@@ -1,0 +1,20 @@
+version: "3.8"
+
+services:
+  file-converter:
+    build: .
+    container_name: file-converter
+    restart: unless-stopped
+    ports:
+      - "9191:9191"
+    volumes:
+      - ./uploads:/app/uploads
+      - ./output:/app/output
+      - ./data:/app/data
+    environment:
+      - UPLOAD_DIR=/app/uploads
+      - OUTPUT_DIR=/app/output
+      - DB_PATH=/app/data/conversions.db
+      - MAX_UPLOAD_MB=500
+    mem_limit: 1g
+    cpus: "2.0"

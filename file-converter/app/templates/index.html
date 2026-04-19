@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>File Converter</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='bg' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0%25' stop-color='%23ff3333'/%3E%3Cstop offset='100%25' stop-color='%23aa0000'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='22' ry='22' fill='url(%23bg)'/%3E%3Crect x='28' y='20' width='30' height='38' rx='3' fill='white' opacity='0.95'/%3E%3Cpolyline points='58,20 68,30 68,68 28,68' fill='none' stroke='white' stroke-width='4' stroke-linejoin='round' opacity='0.95'/%3E%3Cline x1='58' y1='20' x2='58' y2='30' stroke='white' stroke-width='4' opacity='0.95'/%3E%3Cline x1='58' y1='30' x2='68' y2='30' stroke='white' stroke-width='4' opacity='0.95'/%3E%3Cline x1='50' y1='58' x2='50' y2='80' stroke='white' stroke-width='5' stroke-linecap='round' opacity='0.9'/%3E%3Cpolyline points='40,70 50,80 60,70' fill='none' stroke='white' stroke-width='5' stroke-linecap='round' stroke-linejoin='round' opacity='0.9'/%3E%3C/svg%3E">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0f0f0f;
+      --surface:   #1a1a1a;
+      --surface2:  #242424;
+      --border:    #2e2e2e;
+      --accent:    #ff3333;
+      --accent-dk: #cc0000;
+      --text:      #e8e8e8;
+      --muted:     #888;
+      --success:   #22c55e;
+      --error:     #ef4444;
+      --warning:   #f59e0b;
+      --radius:    12px;
+      --shadow:    0 4px 24px rgba(0,0,0,.45);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .page { max-width: 780px; margin: 0 auto; padding: 24px 16px 80px; }
+
+    header { text-align: center; padding: 40px 0 32px; }
+
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .logo-icon {
+      width: 40px; height: 40px;
+      background: var(--accent);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+    }
+
+    .tagline { color: var(--muted); margin-top: 6px; font-size: 14px; }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
+    }
+
+    .drop-zone {
+      border: 2px dashed var(--border);
+      border-radius: var(--radius);
+      padding: 32px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color .2s, background .2s;
+    }
+    .drop-zone.dragover { border-color: var(--accent); background: rgba(255,51,51,.06); }
+    .drop-label { color: var(--muted); font-size: 14px; }
+    .drop-icon  { font-size: 28px; display: block; margin-bottom: 8px; }
+    .drop-link  { color: var(--accent); cursor: pointer; text-decoration: underline; }
+
+    .selected-file {
+      margin-top: 12px;
+      font-size: 13px;
+      color: var(--text);
+      background: var(--surface2);
+      border-radius: 6px;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .format-row { display: flex; gap: 10px; align-items: center; margin-top: 12px; }
+
+    select {
+      flex: 1;
+      background: var(--surface2);
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 14px;
+      padding: 11px 14px;
+      outline: none;
+      cursor: pointer;
+      transition: border-color .2s;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23888' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 36px;
+    }
+    select:focus { border-color: var(--accent); }
+    select option, select optgroup { background: #1a1a1a; }
+
+    .btn-convert {
+      background: var(--accent);
+      border: none; border-radius: 8px;
+      color: #fff; cursor: pointer;
+      font-size: 15px; font-weight: 700;
+      padding: 12px 28px;
+      transition: background .15s, transform .1s;
+      white-space: nowrap;
+    }
+    .btn-convert:hover:not(:disabled) { background: #e02020; }
+    .btn-convert:active:not(:disabled) { transform: scale(.97); }
+    .btn-convert:disabled { opacity: .45; cursor: not-allowed; }
+
+    .section-label {
+      font-size: 13px; font-weight: 600;
+      color: var(--muted); text-transform: uppercase;
+      letter-spacing: .06em; margin: 28px 0 12px;
+    }
+
+    .job-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      margin-bottom: 12px;
+      transition: opacity .4s;
+    }
+
+    .job-card-header {
+      display: flex; justify-content: space-between;
+      align-items: flex-start; gap: 12px; margin-bottom: 12px;
+    }
+
+    .job-title {
+      font-size: 14px; font-weight: 600;
+      white-space: nowrap; overflow: hidden;
+      text-overflow: ellipsis; flex: 1;
+    }
+
+    .job-format { font-size: 12px; color: var(--muted); white-space: nowrap; }
+
+    .progress-track {
+      background: var(--surface2);
+      border-radius: 999px; height: 6px;
+      overflow: hidden; margin-bottom: 8px;
+    }
+
+    .progress-fill {
+      height: 100%; background: var(--accent);
+      border-radius: 999px;
+      transition: width .5s ease; width: 0%;
+    }
+    .progress-fill.done { background: var(--success); }
+    .progress-fill.fail { background: var(--error); }
+
+    .job-meta { display: flex; gap: 16px; font-size: 12px; color: var(--muted); }
+    .job-percent { font-weight: 700; color: var(--text); }
+
+    .badge {
+      display: inline-block; border-radius: 999px;
+      font-size: 11px; font-weight: 700;
+      padding: 2px 10px; letter-spacing: .04em;
+    }
+    .badge-converting { background: rgba(255,51,51,.15); color: var(--accent); }
+    .badge-complete   { background: rgba(34,197,94,.15);  color: var(--success); }
+    .badge-error      { background: rgba(239,68,68,.15);  color: var(--error); }
+    .badge-pending    { background: rgba(245,158,11,.15); color: var(--warning); }
+
+    .table-wrap { overflow-x: auto; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+
+    thead th {
+      text-align: left; padding: 8px 12px;
+      color: var(--muted); font-weight: 600;
+      font-size: 12px; text-transform: uppercase;
+      letter-spacing: .05em; border-bottom: 1px solid var(--border);
+    }
+
+    tbody tr { border-bottom: 1px solid var(--border); transition: background .15s; }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: var(--surface2); }
+
+    td { padding: 10px 12px; vertical-align: middle; }
+
+    .td-title { max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .btn-dl-file {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 6px; color: var(--text); cursor: pointer;
+      font-size: 12px; padding: 4px 10px;
+      text-decoration: none; display: inline-block;
+      transition: background .15s;
+    }
+    .btn-dl-file:hover { background: var(--border); }
+
+    .empty-msg { color: var(--muted); font-size: 14px; text-align: center; padding: 24px 0; }
+
+    .error-banner {
+      background: rgba(239,68,68,.12);
+      border: 1px solid rgba(239,68,68,.3);
+      border-radius: 8px; color: var(--error);
+      font-size: 13px; padding: 10px 14px;
+      margin-bottom: 14px; display: none;
+    }
+    .error-banner.visible { display: block; }
+
+    @media (max-width: 520px) {
+      .format-row { flex-direction: column; }
+      .btn-convert { width: 100%; }
+      .logo { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <div class="logo">
+      <div class="logo-icon">⚙</div>
+      File Converter
+    </div>
+    <p class="tagline">Converta vídeos, áudios, imagens e documentos sem depender de serviços externos</p>
+  </header>
+
+  <div class="card">
+    <div id="formError" class="error-banner"></div>
+
+    <div id="dropZone" class="drop-zone" onclick="document.getElementById('fileInput').click()">
+      <input type="file" id="fileInput" style="display:none" />
+      <div class="drop-label">
+        <span class="drop-icon">📂</span>
+        <span>Arraste um arquivo aqui ou <span class="drop-link">clique para selecionar</span></span>
+      </div>
+      <div id="selectedFile" class="selected-file" style="display:none"></div>
+    </div>
+
+    <div class="format-row">
+      <select id="formatSelect">
+        <optgroup label="🎬 Vídeo">
+          <option value="mp4-to-mkv">MP4 → MKV</option>
+          <option value="mkv-to-mp4">MKV → MP4</option>
+          <option value="mp4-to-avi">MP4 → AVI</option>
+          <option value="any-to-mp3">Vídeo → MP3 (extrair áudio)</option>
+        </optgroup>
+        <optgroup label="🎵 Áudio">
+          <option value="mp3-to-wav">MP3 → WAV</option>
+          <option value="wav-to-mp3">WAV → MP3</option>
+          <option value="flac-to-mp3">FLAC → MP3</option>
+          <option value="any-to-flac">Áudio → FLAC</option>
+        </optgroup>
+        <optgroup label="🖼 Imagem">
+          <option value="png-to-jpg">PNG → JPG</option>
+          <option value="jpg-to-png">JPG → PNG</option>
+          <option value="webp-to-png">WEBP → PNG</option>
+          <option value="webp-to-jpg">WEBP → JPG</option>
+          <option value="jpg-to-webp">JPG → WEBP</option>
+          <option value="png-to-webp">PNG → WEBP</option>
+          <option value="img-to-pdf">Imagem → PDF</option>
+        </optgroup>
+        <optgroup label="📄 Documento">
+          <option value="pdf-to-docx">PDF → DOCX</option>
+          <option value="docx-to-pdf">DOCX → PDF</option>
+          <option value="pdf-to-png">PDF → PNG por página (ZIP)</option>
+          <option value="pptx-to-pdf">PPTX → PDF</option>
+          <option value="xlsx-to-pdf">XLSX → PDF</option>
+        </optgroup>
+      </select>
+      <button id="convertBtn" class="btn-convert" onclick="startConversion()" disabled>
+        ⚙&nbsp; Converter
+      </button>
+    </div>
+  </div>
+
+  <div id="activeSection" style="display:none">
+    <p class="section-label">Em progresso</p>
+    <div id="activeList"></div>
+  </div>
+
+  <p class="section-label">Histórico</p>
+  <div class="card">
+    <div id="historyContent">
+      <p class="empty-msg">Carregando histórico...</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const activeJobs = {};
+
+  // Extensão → formatos válidos
+  const EXT_MAP = {
+    mp4:  ['mp4-to-mkv','mp4-to-avi','any-to-mp3'],
+    mkv:  ['mkv-to-mp4','any-to-mp3'],
+    avi:  ['any-to-mp3'],
+    mov:  ['any-to-mp3'],
+    webm: ['any-to-mp3'],
+    mp3:  ['mp3-to-wav','any-to-flac'],
+    wav:  ['wav-to-mp3','any-to-flac'],
+    flac: ['flac-to-mp3','any-to-flac'],
+    ogg:  ['any-to-mp3','any-to-flac'],
+    png:  ['png-to-jpg','png-to-webp','img-to-pdf'],
+    jpg:  ['jpg-to-png','jpg-to-webp','img-to-pdf'],
+    jpeg: ['jpg-to-png','jpg-to-webp','img-to-pdf'],
+    webp: ['webp-to-png','webp-to-jpg'],
+    pdf:  ['pdf-to-docx','pdf-to-png'],
+    docx: ['docx-to-pdf'],
+    pptx: ['pptx-to-pdf'],
+    xlsx: ['xlsx-to-pdf'],
+  };
+
+  let selectedFile = null;
+
+  document.getElementById('fileInput').addEventListener('change', function() {
+    if (this.files[0]) handleFileSelected(this.files[0]);
+  });
+
+  const dropZone = document.getElementById('dropZone');
+  dropZone.addEventListener('dragover', e => { e.preventDefault(); e.stopPropagation(); dropZone.classList.add('dragover'); });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+  dropZone.addEventListener('drop', e => {
+    e.preventDefault(); e.stopPropagation();
+    dropZone.classList.remove('dragover');
+    if (e.dataTransfer.files[0]) handleFileSelected(e.dataTransfer.files[0]);
+  });
+
+  function handleFileSelected(file) {
+    selectedFile = file;
+    const ext = file.name.split('.').pop().toLowerCase();
+    const sf = document.getElementById('selectedFile');
+    sf.style.display = 'flex';
+    sf.innerHTML = `<span>📄</span><span><strong>${escHtml(file.name)}</strong> (${fmtSize(file.size)})</span>`;
+    filterFormats(ext);
+    document.getElementById('convertBtn').disabled = false;
+    document.getElementById('formError').classList.remove('visible');
+  }
+
+  function filterFormats(ext) {
+    const sel = document.getElementById('formatSelect');
+    const valid = EXT_MAP[ext] || null;
+    for (const opt of sel.options) {
+      opt.style.display = (!valid || valid.includes(opt.value)) ? '' : 'none';
+    }
+    if (valid) {
+      for (const opt of sel.options) {
+        if (valid.includes(opt.value)) { sel.value = opt.value; break; }
+      }
+    }
+  }
+
+  async function startConversion() {
+    if (!selectedFile) return;
+    const format = document.getElementById('formatSelect').value;
+    const btn = document.getElementById('convertBtn');
+    const errEl = document.getElementById('formError');
+    errEl.classList.remove('visible');
+
+    btn.disabled = true;
+    btn.textContent = 'Enviando...';
+
+    const formData = new FormData();
+    formData.append('file', selectedFile);
+    formData.append('format', format);
+
+    try {
+      const res = await fetch('/api/convert', { method: 'POST', body: formData });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.detail || `Erro ${res.status}`);
+      }
+      const { job_id } = await res.json();
+
+      const fileName = selectedFile.name;
+      selectedFile = null;
+      document.getElementById('selectedFile').style.display = 'none';
+      document.getElementById('fileInput').value = '';
+      document.getElementById('convertBtn').disabled = true;
+
+      addJobCard(job_id, fileName, format);
+      connectSSE(job_id, format);
+
+    } catch (err) {
+      showError('Erro ao enviar: ' + err.message);
+    } finally {
+      btn.disabled = !selectedFile;
+      btn.textContent = '⚙\u00a0 Converter';
+    }
+  }
+
+  function showError(msg) {
+    const el = document.getElementById('formError');
+    el.textContent = '⚠ ' + msg;
+    el.classList.add('visible');
+  }
+
+  function addJobCard(id, filename, format) {
+    const section = document.getElementById('activeSection');
+    const list    = document.getElementById('activeList');
+    const card = document.createElement('div');
+    card.className = 'job-card';
+    card.id = 'card-' + id;
+    card.innerHTML = `
+      <div class="job-card-header">
+        <div class="job-title" id="title-${id}">${escHtml(filename)}</div>
+        <div class="job-format">${escHtml(fmtLabel(format))}</div>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="fill-${id}"></div>
+      </div>
+      <div class="job-meta">
+        <span class="job-percent" id="pct-${id}">0%</span>
+        <span id="badge-${id}"><span class="badge badge-converting">Convertendo</span></span>
+      </div>
+    `;
+    list.prepend(card);
+    section.style.display = '';
+  }
+
+  function connectSSE(id, format) {
+    const es = new EventSource('/api/progress/' + id);
+    activeJobs[id] = es;
+
+    es.onmessage = function(evt) {
+      const data = JSON.parse(evt.data);
+      updateJobCard(id, data);
+      if (data.status === 'complete' || data.status === 'error') {
+        es.close();
+        delete activeJobs[id];
+        loadHistory();
+        setTimeout(() => {
+          const card = document.getElementById('card-' + id);
+          if (card) card.style.opacity = '0.45';
+        }, 4000);
+      }
+    };
+    es.onerror = () => es.close();
+  }
+
+  function updateJobCard(id, d) {
+    const titleEl = document.getElementById('title-' + id);
+    const fillEl  = document.getElementById('fill-'  + id);
+    const pctEl   = document.getElementById('pct-'   + id);
+    const badgeEl = document.getElementById('badge-' + id);
+    if (!titleEl) return;
+
+    fillEl.style.width = d.percent + '%';
+    pctEl.textContent  = d.percent + '%';
+
+    if (d.status === 'complete') {
+      fillEl.classList.add('done');
+      pctEl.textContent = '100%';
+      badgeEl.innerHTML = '<span class="badge badge-complete">✓ Concluído</span>';
+    } else if (d.status === 'error') {
+      fillEl.classList.add('fail');
+      titleEl.textContent = 'Erro: ' + (d.error || 'falha desconhecida');
+      badgeEl.innerHTML = '<span class="badge badge-error">✗ Erro</span>';
+    }
+  }
+
+  async function loadHistory() {
+    const container = document.getElementById('historyContent');
+    try {
+      const res     = await fetch('/api/history');
+      const history = await res.json();
+
+      if (!history.length) {
+        container.innerHTML = '<p class="empty-msg">Nenhuma conversão ainda.</p>';
+        return;
+      }
+
+      const rows = history.map(item => {
+        const conversion = `${item.input_format?.toUpperCase() || '?'} → ${item.output_format?.toUpperCase() || '?'}`;
+        const dlBtn = item.output_filename
+          ? `<a class="btn-dl-file" href="/files/${encodeURIComponent(item.output_filename)}" download>⬇ Baixar</a>`
+          : '—';
+        return `
+          <tr>
+            <td class="td-title" title="${escHtml(item.original_filename)}">${escHtml(item.original_filename)}</td>
+            <td style="white-space:nowrap">${escHtml(conversion)}</td>
+            <td><span class="badge badge-${item.status}">${statusLabel(item.status)}</span></td>
+            <td style="white-space:nowrap;color:var(--muted)">${fmtDate(item.created_at)}</td>
+            <td>${dlBtn}</td>
+          </tr>
+        `;
+      }).join('');
+
+      container.innerHTML = `
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Arquivo</th>
+                <th>Conversão</th>
+                <th>Status</th>
+                <th>Data</th>
+                <th>Download</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+      `;
+    } catch {
+      container.innerHTML = '<p class="empty-msg" style="color:var(--error)">Erro ao carregar histórico.</p>';
+    }
+  }
+
+  function fmtLabel(key) {
+    const map = {
+      'mp4-to-mkv':'MP4→MKV','mkv-to-mp4':'MKV→MP4','mp4-to-avi':'MP4→AVI','any-to-mp3':'→MP3',
+      'mp3-to-wav':'MP3→WAV','wav-to-mp3':'WAV→MP3','flac-to-mp3':'FLAC→MP3','any-to-flac':'→FLAC',
+      'png-to-jpg':'PNG→JPG','jpg-to-png':'JPG→PNG','webp-to-png':'WEBP→PNG','webp-to-jpg':'WEBP→JPG',
+      'jpg-to-webp':'JPG→WEBP','png-to-webp':'PNG→WEBP','img-to-pdf':'→PDF',
+      'pdf-to-docx':'PDF→DOCX','docx-to-pdf':'DOCX→PDF','pdf-to-png':'PDF→PNG(ZIP)',
+      'pptx-to-pdf':'PPTX→PDF','xlsx-to-pdf':'XLSX→PDF',
+    };
+    return map[key] || key;
+  }
+
+  function statusLabel(s) {
+    return {complete:'✓ Concluído',error:'✗ Erro',pending:'⏳ Pendente',converting:'⚙ Convertendo'}[s] || s;
+  }
+
+  function fmtDate(iso) {
+    if (!iso) return '—';
+    return new Date(iso).toLocaleString('pt-BR', {dateStyle:'short',timeStyle:'short'});
+  }
+
+  function fmtSize(bytes) {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024*1024) return (bytes/1024).toFixed(1) + ' KB';
+    return (bytes/1024/1024).toFixed(1) + ' MB';
+  }
+
+  function escHtml(s) {
+    return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  loadHistory();
+</script>
+</body>
+</html>
