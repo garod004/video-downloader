@@ -4,7 +4,7 @@ name: Real Assessoria
 tagline: Sistema de gestão jurídica para assessorias
 icon: https://raw.githubusercontent.com/garod004/yt-downloader/main/garod004-apps-realassessoria/icon.svg
 category: productivity
-version: '1.0.0'
+version: '1.1.0'
 port: 8180
 description: >-
   Sistema completo de gestão jurídica para assessorias previdenciárias.
@@ -23,6 +23,6 @@ path: ''
 defaultUsername: 'admin@realassessoria.local'
 defaultPassword: 'admin123'
 releaseNotes: >-
-  Versão inicial com sistema de modelos de documentos, geração de PDF e gestão completa de clientes.
+  Editor TinyMCE com chave de API, 5 modelos de documentos pré-cadastrados, 2 advogados cadastrados e correção de bugs.
 submitter: garod004
 submission: https://github.com/garod004/realassessoria_1
