@@ -9,6 +9,9 @@ services:
   server:
     image: ghcr.io/garod004/real-assessoria:latest
     restart: on-failure
+    depends_on:
+      db:
+        condition: service_healthy
     environment:
       DB_HOST: garod004-apps-realassessoria_db_1
       DB_USER: realassessoria
@@ -29,3 +32,9 @@ services:
       MYSQL_ROOT_PASSWORD: realassessoria_root_pass
     volumes:
       - ${APP_DATA_DIR}/mysql:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-urealassessoria", "-prealassessoria_db_pass"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
