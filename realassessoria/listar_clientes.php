@@ -1,3 +1,15 @@
+<?php
+session_start();
+
+header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+header("Cache-Control: post-check=0, pre-check=0", false);
+header("Pragma: no-cache");
+
+if (!isset($_SESSION['usuario_id'])) {
+    header("Location: index.html");
+    exit();
+}
+?>
 <script>
 // Função para abrir cálculo CNIS com dados do cliente selecionado
 function abrirCalculoCNIS() {
@@ -41,18 +53,6 @@ function abrirCalculoCNIS() {
 }
 </script>
 <?php
-session_start();
-
-// Impedir cache do navegador
-header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
-header("Cache-Control: post-check=0, pre-check=0", false);
-header("Pragma: no-cache");
-
-// Autenticação: redireciona se o usuário não estiver logado
-if (!isset($_SESSION['usuario_id'])) {
-    header("Location: index.html");
-    exit();
-}
 
 // Definir tipo de usuário e permissões
 $tipo_usuario = $_SESSION['tipo_usuario'] ?? 'usuario';
