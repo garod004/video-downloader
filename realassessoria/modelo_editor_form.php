@@ -78,7 +78,7 @@ $grupos_marcadores = ModeloSubstituicao::obterGruposMarcadores();
     </form>
 </div>
 
-<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
+<script src="https://cdn.tiny.cloud/1/fbr1kxqyfd49vte3xkiwwzoehwzadjonrk0yeun6tqdttfi8/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
 <script>
 tinymce.init({
     selector: '#conteudo',
